@@ -11,26 +11,23 @@ const app = express();
 // CORS configuration
 const corsOptions = {
   origin: (origin, callback) => {
-    // Allow multiple origins (you can add more as needed)
     const allowedOrigins = [
-      "http://localhost:3000", // Frontend URL for development
-      "https://finger-1.onrender.com", // Deployed backend URL
+      "http://localhost:3000", // Local frontend URL
+      "https://aws-1-u47o.onrender.com", // Deployed frontend URL
     ];
 
-    // Check if the origin is allowed
-    if (allowedOrigins.includes(origin) || !origin) {
-      // Allow requests without an origin (e.g., Postman)
-      callback(null, true);
+    // Allow requests without an Origin header (e.g., Postman) or from allowed origins
+    if (!origin || allowedOrigins.includes(origin)) {
+      callback(null, true); // Allow request
     } else {
-      // Reject requests from disallowed origins
-      callback(new Error("Not allowed by CORS"));
+      callback(new Error("Not allowed by CORS")); // Block request
     }
   },
   methods: ["GET", "POST", "PUT", "DELETE"], // Allowed HTTP methods
-  allowedHeaders: ["Content-Type", "Authorization"], // Allowed headers, include Authorization for JWT
+  allowedHeaders: ["Content-Type", "Authorization"], // Allowed headers
 };
 
-app.use(cors(corsOptions)); // Apply CORS middleware with dynamic options
+app.use(cors(corsOptions)); // Apply CORS middleware
 
 // Middleware to parse JSON request bodies
 app.use(express.json());
@@ -45,17 +42,20 @@ app.use("/api/auth", authRoutes);
 app.use("/api/attendance", attendanceRoutes);
 app.use("/api/admin", adminRoutes); // Register admin routes
 
-// Error handling middleware (optional)
+// Handle preflight requests (important for CORS in browsers)
+app.options("*", cors(corsOptions)); // Allow OPTIONS requests from any route
+
+// Error handling middleware
 app.use((err, req, res, next) => {
   console.error(err.stack);
   res.status(500).json({ error: "An error occurred!" });
 });
 
+// Start the server
 const PORT = process.env.PORT || 5000;
 app.listen(PORT, () => {
   console.log(`Server running on port ${PORT}`);
 });
-
 
 // const express = require("express");
 // const cors = require("cors");
