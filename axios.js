@@ -5,7 +5,7 @@ const axios = require("axios");
 const baseURL =
   process.env.NODE_ENV === "development"
     ? "http://localhost:5000" // Local backend URL for development
-    : "https://aws-pm73.onrender.com"; // Remote backend URL for production
+    : "https://rds-y916.onrender.com"; // Remote backend URL for production
 
 // Set up the Axios instance with the dynamic base URL
 const instance = axios.create({
